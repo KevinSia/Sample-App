@@ -1,30 +1,10 @@
-<% provide(:title , 'Sign Up') %>
+<% provide(:title, 'Sign Up') %>
+<% provide(:button_text, 'Create my account!') %>
 <h1>Sign up</h1>
 
 <div class = "row">
 	<div class = "col-md-6 col-md-offset-3">
-
-		<%= form_for(@user) do |f| %>
-			<%= render 'shared/error_messages' %>
-
-			<%= f.label :name, "Name"%>
-			<%= f.text_field :name, class: "form-control", placeholder: "Name" %>
-
-			<%= f.label :description , "Your description" %>
-			<%= f.text_area :description, class: 'wysihtml5' %>
-
-			<%= f.label :email , "Your email address" %>
-			<%= f.email_field :email, class: "form-control" ,  placeholder: "Email" %>
-
-			<%= f.label :password %>
-			<%= f.password_field :password, class: "form-control" ,  placeholder: "Password" %>
-
-			<%= f.label :password_confirmation , "Confirmation" %>
-			<%= f.password_field :password_confirmation , class: "form-control" ,  placeholder: "Retype password" %>
-
-			<%= f.submit "Create My Account" , class: "btn btn-primary" %>
-
-		<% end %>
+	<%= render 'users/form' %>
 	</div>
 </div>
 
