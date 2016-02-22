@@ -36,7 +36,7 @@ module SessionsHelper
 			@current_user ||= User.find_by(id: user_id)
 		elsif (user_id = cookies.signed[:user_id]) # when user closes browser session expires
 			user = User.find_by(id: user_id)
-			if user && user.authenticated?(cookies[:remember_token])
+			if user && user.authenticated?(:remember, cookies[:remember_token])
 				log_in user # user who comes with cookie does not need to go login page
 				@current_user = user
 			end

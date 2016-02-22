@@ -1,0 +1,10 @@
+Greetings, <%= @user.name %>
+
+Thank you for signing up to Sample App!
+
+Please activate your account throught the link provided below:
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>
+
+
+Regards,
+Sample App

@@ -1,0 +1,9 @@
+<h1>Greetings, <%= @user.name %></h1>
+
+<p>Thank you for signing up to <strong>Sample App</strong></p>
+
+<p>Please activate your account through the link provided below:</p>
+<p><%= link_to 'Activate', edit_account_activation_url(@user.activation_token, email: @user.email) %></p>
+
+<p>Regards,</p>
+<p>Sample App</p>

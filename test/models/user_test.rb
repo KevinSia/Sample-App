@@ -79,6 +79,6 @@ class UserTest < ActiveSupport::TestCase
 
 	#remember_digest is already nil, remember_token can be anything
 	test "authenticated? return false if received nil digest" do
-		assert_not @user.authenticated?("abc")
+		assert_not @user.authenticated?(:remember, "abc")
 	end
 end

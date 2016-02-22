@@ -42,4 +42,9 @@ Rails.application.configure do
         Bullet.enable = true
         Bullet.alert = true
     end
+
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :test
+  host = 'localhost:3000'
+  config.action_mailer.default_url_options = { host: host }
 end
