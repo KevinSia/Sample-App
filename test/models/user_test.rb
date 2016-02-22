@@ -1,13 +1,13 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  
+
 	def setup
-		@user = User.new(name: "Example User" , email: "user@example.com" , 
+		@user = User.new(name: "Example User" , email: "user@example.com" ,
 							password: "foobar" , password_confirmation: "foobar")
 	end
 
-	test "should be valid" do 
+	test "should be valid" do
 		assert @user.valid?
 	end
 
@@ -42,13 +42,13 @@ class UserTest < ActiveSupport::TestCase
 	end
 
 	test "email validation should reject invalid addresses" do
-		invalid_addresses = %w[user@example,com user_at_foo.org user.name@example. foo@bar_baz.org foo@bar+baz.com 
+		invalid_addresses = %w[user@example,com user_at_foo.org user.name@example. foo@bar_baz.org foo@bar+baz.com
 											foo@bar..org]
 
 		invalid_addresses.each do |address|
 			@user.email = address
 			assert_not @user.valid? , "#{address.inspect} should be invalid"
-			
+
 		end
 	end
 
@@ -57,7 +57,7 @@ class UserTest < ActiveSupport::TestCase
 		duplicate_user = @user.dup
 		duplicate_user.email = @user.email.upcase #to check if upcase = lowcase
 		@user.save
-		assert_not duplicate_user.valid? 
+		assert_not duplicate_user.valid?
 	end
 
 	test "password should be present" do
@@ -75,5 +75,10 @@ class UserTest < ActiveSupport::TestCase
 		@user.email = mixed_cased_email
 		@user.save
 		assert_equal mixed_cased_email.downcase , @user.reload.email
+	end
+
+	#remember_digest is already nil, remember_token can be anything
+	test "authenticated? return false if received nil digest" do
+		assert_not @user.authenticated?("abc")
 	end
 end

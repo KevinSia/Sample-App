@@ -3,11 +3,15 @@
 
 <div class = "row">
 	<div class = "col-md-6 col-md-offset-3">
+
 		<%= form_for(@user) do |f| %>
 			<%= render 'shared/error_messages' %>
 
-			<%= f.label :name , "Your name" %>
-			<%= f.text_field :name , class: "form-control" , placeholder: "Name" %>
+			<%= f.label :name, "Name"%>
+			<%= f.text_field :name, class: "form-control", placeholder: "Name" %>
+
+			<%= f.label :description , "Your description" %>
+			<%= f.text_area :description, class: 'wysihtml5' %>
 
 			<%= f.label :email , "Your email address" %>
 			<%= f.email_field :email, class: "form-control" ,  placeholder: "Email" %>
@@ -23,3 +27,13 @@
 		<% end %>
 	</div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    $('.wysihtml5').each(function(i, elem) {
+      $(elem).wysihtml5();
+    });
+
+  })
+</script>

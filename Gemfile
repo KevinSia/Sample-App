@@ -35,9 +35,34 @@ gem 'bcrypt', '~> 3.1.7'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'bootstrap-wysihtml5-rails'
+gem 'will_paginate'
+gem 'bootstrap-will_paginate'
+
+
+gem 'puma'
+
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+    gem 'byebug'
+    gem 'guard'
+    gem 'guard-rspec'
+    gem 'guard-puma'
+    gem 'rspec'
+    gem 'rspec-rails'
+    gem 'shoulda-matchers'
+    gem 'factory_girl_rails'
+    gem 'shoulda-callback-matchers'
+    gem 'faker'
+
+    # For developer's code improvements
+    gem 'colored'
+    gem 'traceroute'
+    gem 'rails_best_practices'
+    gem 'rubocop'
+    gem 'rubycritic'
+    gem 'brakeman'
+    gem 'bullet'
+    gem 'rack-mini-profiler'
 end
 
 group :development do
