@@ -1,4 +1,7 @@
 class User < ActiveRecord::Base
+
+	has_many :microposts, dependent: :destroy
+
 	#creates a virtual attribute(instance variable)
 	attr_accessor :remember_token, :activation_token, :reset_token
 
@@ -44,6 +47,10 @@ class User < ActiveRecord::Base
 	def create_reset_digest
     self.reset_token = User.new_token
     update_columns(reset_digest: User.digest(reset_token), reset_sent_at: Time.zone.now)
+  end
+
+  def feed
+  	Micropost.includes(:user).where("user_id = ?", id)
   end
 
 	# removes token associated to user
