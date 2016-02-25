@@ -93,13 +93,35 @@ class UserTest < ActiveSupport::TestCase
 	test "should follow and unfollow a user" do
 		kevin   = users(:kevin)
 		michael = users(:michael)
+
+		#relationship.yml affects this test
+		assert kevin.following?(michael)
+
+		kevin.unfollow(michael)
 		assert_not kevin.following?(michael)
 
 		kevin.follow(michael)
 		assert kevin.following?(michael)
 		assert michael.followers.include?(kevin)
+	end
 
-		kevin.unfollow(michael)
-		assert_not kevin.following?(michael)
+	test "feed should only followed users post" do
+		kevin   = users(:kevin)
+		amy			= users(:amy)
+		amanda  = users(:amanda)
+
+		# Posts from followed user
+		amy.microposts.each do |following_post|
+			assert kevin.feed.include?(following_post)
+		end
+
+		# Posts from self
+		kevin.microposts.each do |self_post|
+			assert kevin.feed.include?(self_post)
+		end
+
+		amanda.microposts.each do |unfollowing_post|
+			assert_not kevin.feed.include?(unfollowing_post)
+		end
 	end
 end

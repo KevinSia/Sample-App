@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
                                   foreign_key: "followed_id",
                                     dependent: :destroy
   # user.following -> followed_id array
-  # user.followers -> followers_id array
+  # user.followers -> follower_id array
   has_many :following, through: :active_relationships,  source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
 
@@ -62,7 +62,8 @@ class User < ActiveRecord::Base
   end
 
   def feed
-  	Micropost.includes(:user).where("user_id = ?", id)
+    following_ids = "SELECT followed_id FROM relationships WHERE follower_id = :user_id"
+  	Micropost.where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id)
   end
 
 	# removes token associated to user
