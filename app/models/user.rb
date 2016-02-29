@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
                                   uniqueness: { case_sensitive: false }
 	validates :password , presence: true , length: { minimum: 6 }, allow_nil: true
 
-	# to produce virtual columns: password & password_confirmation
+	# to produce attributes: password & password_confirmation
 	# it will also validate nil password
 	has_secure_password
 

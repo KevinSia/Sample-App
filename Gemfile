@@ -19,6 +19,7 @@ gem 'mini_magick'
 gem 'puma'
 gem 'will_paginate'
 gem 'figaro'
+gem 'sendgrid'
 
 group :development, :test do
     gem 'byebug'
