@@ -18,6 +18,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'mini_magick'
 gem 'puma'
 gem 'will_paginate'
+gem 'figaro'
 
 group :development, :test do
     gem 'byebug'
@@ -38,17 +39,18 @@ group :development, :test do
     gem 'brakeman'
     gem 'bullet'
     gem 'rack-mini-profiler'
-end
-
-group :development do
-  gem 'web-console', '~> 2.0'
-  gem 'spring'
+    gem 'web-console', '~> 2.0'
+    gem 'spring'
 end
 
 group :test do
   gem 'minitest-reporters', '1.0.5'
   gem 'mini_backtrace',     '0.1.3'
   gem 'guard-minitest',     '2.3.1'
+end
+
+group :production do
+  gem 'rails_12factor',     '0.0.2'
 end
 
 
