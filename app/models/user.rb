@@ -1,5 +1,11 @@
 class User < ActiveRecord::Base
 
+  # lib/user_*.rb
+  include UserFollow
+  include UserActivation
+  include UserPasswordReset
+  include UserRemember
+  # ------ associations ------
 	has_many :microposts, dependent: :destroy
   # active -> you are the follower  -> your id = follower_id
   # passive -> someone followed you -> your id = followed_id
@@ -14,13 +20,16 @@ class User < ActiveRecord::Base
   has_many :following, through: :active_relationships,  source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
 
+  # ------ attributes ------
 	#creates a virtual attribute(instance variable)
 	attr_accessor :remember_token, :activation_token, :reset_token
 
+  # ------ callbacks ------
 	# turn into lowercase
 	before_save :downcase_email
 	before_create :create_activation_digest
 
+  # ------ validations ------
 	validates :name ,  presence: true , length: { maximum: 50 }
 	validates :email , presence: true , length: { maximum: 255 },
                                        email: true,
@@ -31,78 +40,112 @@ class User < ActiveRecord::Base
 	# it will also validate nil password
 	has_secure_password
 
+  # ------ filterrific ------
+  filterrific(
+  default_filter_params: { sorted_by: 'created_at_desc'},
+  available_filters: [
+    :sorted_by,
+    :search_query,
+    :with_created_at_gte
+    ]
+  )
+
+  # ------ scopes ------
+  # filterrific scopes
+  scope :sorted_by, lambda { |sort_option|
+    # extract the sort direction from the param value.
+    direction = (sort_option =~ /desc$/) ? 'desc' : 'asc'
+    case sort_option.to_s
+    when /^created_at_/
+      # Simple sort on the created_at column.
+      # Make sure to include the table name to avoid ambiguous column names.
+      # Joining on other tables is quite common in Filterrific, and almost
+      # every ActiveRecord table has a 'created_at' column.
+      order("users.created_at #{ direction }")
+    when /^name_/
+      # Simple sort on the name colums
+      order("LOWER(users.name) #{ direction }") #, LOWER(users.first_name) #{ direction }")
+    else
+      raise(ArgumentError, "Invalid sort option: #{ sort_option.inspect }")
+    end
+  }
+
+  # always include the lower boundary for semi open intervals
+  scope :with_created_at_gte, lambda { |reference_time|
+    where('users.created_at >= ?', reference_time)
+  }
+
+  scope :search_query, lambda { |query|
+    # Matches using LIKE, automatically appends '%' to each term.
+    # LIKE is case INsensitive with MySQL, however it is case
+    # sensitive with PostGreSQL. To make it work in both worlds,
+    # we downcase everything.
+    return nil if query.blank?
+
+    # condition query, parse into individual keywords
+    terms = query.downcase.split(/\s+/)
+
+    # replace "*" with "%" for wildcard searches,
+    # append '%', remove duplicate '%'s
+    terms = terms.map { |e|
+      ('%' + e.gsub('*', '%') + '%').gsub(/%+/, '%')
+    }
+
+    num_or_conds = 1
+
+    where(
+      terms.map { |term|
+        "(LOWER(users.name) LIKE ?)"
+      }.join(' AND '),
+      *terms.map { |e| [e] * num_or_conds }.flatten
+    )
+  }
+
+
+  # ------ class methods ------
 	class << self
 		def digest(string)
 			cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
 			BCrypt::Password.create(string, cost: cost)
 		end
 
-		# returns a random token
-		def new_token
-			SecureRandom.urlsafe_base64
-		end
-	end
+    # returns a random token
+    def new_token
+      SecureRandom.urlsafe_base64
+    end
+
+    # -- filterrific methods --
+    def options_for_sorted_by
+      [
+        ['Name (a-z)', 'name_asc'],
+        ['Registration date (newest first)', 'created_at_desc'],
+        ['Registration date (oldest first)', 'created_at_asc'],
+      ]
+    end
+  end
+
+  # ------ instance methods --------
 
 
-	def activate
-		update_columns(activated: true, activated_at: Time.zone.now)
-	end
-
-	# matches with the incoming cookie's remember_token
-	# returns true if token matches digest
-	def authenticated?(attribute, token)
-		digest = send("#{attribute}_digest")
-		return false if digest.nil? # Password.new(nil) raises error
-		BCrypt::Password.new(digest).is_password?(token)
-	end
-
-	def create_reset_digest
-    self.reset_token = User.new_token
-    update_columns(reset_digest: User.digest(reset_token), reset_sent_at: Time.zone.now)
+  # matches with the incoming token
+  # returns true if token matches digest
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+    return false if digest.nil? # Password.new(nil) raises error
+    BCrypt::Password.new(digest).is_password?(token)
   end
 
   def feed
     following_ids = "SELECT followed_id FROM relationships WHERE follower_id = :user_id"
     # use includes to avoid N+1 by eager loading users
-  	Micropost.includes(:user).where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id)
+    Micropost.includes(:user).where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id)
   end
 
-	# removes token associated to user
-	def forget
-		update_attribute(:remember_digest, nil)
-	end
 
-	def password_reset_expired?
-		reset_sent_at < 2.hours.ago
-	end
-
-	# remembers user in database for use in persistent sessions
-	def remember
-		self.remember_token = User.new_token
-		#bypasses validation for pass and email
-		update_attribute(:remember_digest , User.digest(remember_token))
-	end
-
-	def send_activation_email
-		UserMailer.account_activation(self).deliver_now
-	end
-
-	def send_password_reset_email
-		UserMailer.password_reset(self).deliver_now
-	end
-
-  def following?(other_user)
-    following.include?(other_user)
+  # -- filterrific methods --
+  def decorated_created_at
+    created_at.to_date.to_s(:long)
   end
-
-  def follow(other_user)
-    active_relationships.create(followed_id: other_user.id)
-  end
-
-  def unfollow(other_user)
-    active_relationships.find_by(followed_id: other_user.id).destroy
-  end
-
 
 
   private

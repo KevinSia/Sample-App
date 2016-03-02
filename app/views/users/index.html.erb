@@ -1,12 +1,46 @@
-<%= provide(:title, "All users") %>
-<h1>All Users</h1>
+<%= provide(:title, "Users List") %>
+<h1>Users List</h1>
 
-<%= will_paginate %>
+<%#
+  Filterrific adds the `form_for_filterrific` view helper:
+  * adds dom id 'filterrific_filter'
+  * applies javascript behaviors:
+      * AJAX form submission on change
+      * AJAX spinner while AJAX request is being processed
+  * sets form_for options like :url, :method and input name prefix
+%>
 
-<!-- Rails will iterate through @users and
-		 render with partial _user_html.erb -->
-<ul class="users">
-	<%= render @users %>
-</ul>
+<%= form_for_filterrific @filterrific do |f| %>
+  <div>
+    Search by name
+    <%# give the search field the 'filterrific-periodically-observed' class for live updates %>
+    <%= f.text_field(
+      :search_query,
+      class: 'filterrific-periodically-observed'
+    								) %>
+  </div>
+  <div>
+    Registered after
+    <%= f.text_field(:with_created_at_gte, class: 'js-datepicker') %>
+  </div>
+  <div>
+    Sort by
+    <%= f.select(:sorted_by, @filterrific.select_options[:sorted_by]) %>
+  </div>
+  <div>
+    <%= link_to 'Reset filters', reset_filterrific_url, class: 'btn btn-primary' %>
+  </div>
+  <%# add an automated spinner to your form when the list is refreshed %>
+  <%= render_filterrific_spinner %>
+<% end %>
 
-<%= will_paginate %>
+<%= render(
+  partial: 'users/list',
+  locals: { users: @users }
+) %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.js-datepicker').datepicker();
+  });
+</script>

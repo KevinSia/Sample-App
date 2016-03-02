@@ -1,25 +1,32 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.5'
+gem 'coffee-rails', '~> 4.1.0'
+gem 'pg', '~> 0.15'
 
 gem 'bootstrap-sass', '3.2.0.0'
 gem 'bcrypt', '~> 3.1.7'
-gem 'bootstrap-will_paginate'
-gem 'bootstrap-wysihtml5-rails'
-gem 'carrierwave'
-gem 'coffee-rails', '~> 4.1.0'
-gem 'fog'
 gem 'jquery-rails'
-gem 'pg', '~> 0.15'
-gem 'sass-rails', '~> 5.0'
-gem 'uglifier', '>= 1.3.0'
 gem 'turbolinks'
 gem 'sdoc', '~> 0.4.0', group: :doc
+
 gem 'mini_magick'
 gem 'puma'
 gem 'will_paginate'
 gem 'figaro'
 gem 'sendgrid'
+gem 'carrierwave'
+gem 'fog'
+gem 'bootstrap-will_paginate'
+gem 'bootstrap-wysihtml5-rails'
+
+gem 'bootstrap-datepicker-rails'
+gem 'filterrific'
+
+
+gem 'sass-rails', '~> 5.0'
+gem 'uglifier', '>= 1.3.0'
+
 
 group :development, :test do
     gem 'byebug'

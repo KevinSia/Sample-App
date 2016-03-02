@@ -8,7 +8,9 @@
 			<%= render 'shared/error_messages', object: f.object %>
 
 			<!-- edit action gets email from link, it disappears when pass to update action -->
-			<!-- this puts in params[:email] instead of params[:user][:email] -->
+			<!-- cant do f.hidden_field -->
+			<!-- because email is in params[:email] instead of params[:user][:email] -->
+			<!-- update action find_by(email) -->
 			<%= hidden_field_tag :email, @user.email %>
 
 			<%= f.label :password %>

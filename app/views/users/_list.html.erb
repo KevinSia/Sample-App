@@ -1,0 +1,27 @@
+<%# app/views/users/_list.html.erb %>
+<%# object @users is passed here and named users %>
+<div id="filterrific_results">
+
+  <div>
+    <%= page_entries_info users %>
+  </div>
+
+  <table>
+    <tr>
+      <th>Gravatar</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Registered at</th>
+    </tr>
+    <% users.each do |user| %>
+      <tr>
+        <td><%= gravatar_for user, size: 50 %></td>
+        <td><%= link_to user.name, user_path(user) %></td>
+        <td><%= user.email %></td>
+        <td><%= user.decorated_created_at %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<%= will_paginate users %>

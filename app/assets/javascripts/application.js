@@ -16,3 +16,5 @@
 //= require turbolinks
 //= require_tree .
 //= require bootstrap-wysihtml5
+//= require filterrific/filterrific-jquery
+//= require bootstrap-datepicker
