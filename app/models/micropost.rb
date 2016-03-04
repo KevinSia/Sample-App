@@ -9,7 +9,7 @@ class Micropost < ActiveRecord::Base
   # validateS uses default validators/custom validator classes
   # validate  uses custom validation method/block
   validates :user_id, presence: true
-  validates :content, presence: true, length: { maximum: 140 }
+  validates :content, presence: true, length: { maximum: 350 }
   validate :picture_size
 
   private

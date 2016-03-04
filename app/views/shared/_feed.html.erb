@@ -4,4 +4,6 @@
 		<%= render @feed_items %>
 	</ol>
 	<%= will_paginate @feed_items %>
+<% else %>
+	<h3>You have not created a micropost yet! Make one now :)</h3>
 <% end %>
